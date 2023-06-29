@@ -3,6 +3,7 @@ package txpool
 import (
 	"container/heap"
 	"github.com/summerpro/toy-trading-system/types"
+	"sync"
 )
 
 type Heap []types.TxsData
@@ -33,6 +34,7 @@ func (heap *Heap) Pop() interface{} {
 
 type TxsHeap struct {
 	txsHeap *Heap
+	lock    sync.Mutex
 }
 
 func NewTxsHeap(size int) *TxsHeap {
@@ -42,9 +44,30 @@ func NewTxsHeap(size int) *TxsHeap {
 }
 
 func (txsHeap *TxsHeap) Push(txs types.TxsData) {
+	txsHeap.Lock()
+	defer txsHeap.UnLock()
+
 	heap.Push(txsHeap.txsHeap, txs)
 }
 
 func (txsHeap *TxsHeap) Pop() types.TxsData {
+	txsHeap.Lock()
+	defer txsHeap.UnLock()
+
 	return heap.Pop(txsHeap.txsHeap).(types.TxsData)
+}
+
+func (txsHeap *TxsHeap) Size() int {
+	txsHeap.Lock()
+	defer txsHeap.UnLock()
+
+	return len(*txsHeap.txsHeap)
+}
+
+func (txsHeap *TxsHeap) Lock() {
+	txsHeap.lock.Lock()
+}
+
+func (txsHeap *TxsHeap) UnLock() {
+	txsHeap.lock.Unlock()
 }

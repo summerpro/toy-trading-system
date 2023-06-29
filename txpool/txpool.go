@@ -6,15 +6,48 @@ import (
 )
 
 type HeapTxPool struct {
-	size     int
-	txsHeap  TxsHeap
+	maxSize  int
+	txsHeap  *TxsHeap
 	poolLock sync.Mutex
 }
 
-func (txPool *HeapTxPool) InsertTx(tx *types.Tx) {
-
+func NewHeapTxPool(maxSize int, initPoolSize int) *HeapTxPool {
+	return &HeapTxPool{
+		maxSize:  maxSize,
+		txsHeap:  NewTxsHeap(initPoolSize),
+		poolLock: sync.Mutex{},
+	}
 }
 
-func (txPool *HeapTxPool) GetTopTx(txNum int) []types.Tx {
-	return nil
+func (txPool *HeapTxPool) InsertTx(txs types.TxsData) {
+	txPool.Lock()
+	defer txPool.UnLock()
+
+	if txPool.txsHeap.Size() < txPool.maxSize {
+		txPool.txsHeap.Push(txs)
+	}
+}
+
+func (txPool *HeapTxPool) GetTopTx(txNum int) []types.TxsData {
+	txPool.Lock()
+	defer txPool.UnLock()
+
+	txsList := make([]types.TxsData, 0, txNum)
+
+	for i := 0; i < txNum; i++ {
+		if txPool.txsHeap.Size() == 0 {
+			break
+		}
+		txs := txPool.txsHeap.Pop()
+		txsList = append(txsList, txs)
+	}
+	return txsList
+}
+
+func (txPool *HeapTxPool) Lock() {
+	txPool.poolLock.Lock()
+}
+
+func (txPool *HeapTxPool) UnLock() {
+	txPool.poolLock.Unlock()
 }
