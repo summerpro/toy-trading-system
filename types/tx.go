@@ -2,14 +2,16 @@ package types
 
 import "encoding/json"
 
-type Tx []struct {
-	From   string
-	To     string
-	Amount int64
-	Fee    int64
+type Txs []Tx
+
+type Tx struct {
+	From   Address
+	To     Address
+	Amount Amount
+	Fee    Amount
 }
 
-func (tx *Tx) Serialize() []byte {
+func (tx *Txs) Serialize() []byte {
 	res, err := json.Marshal(tx)
 	if err != nil {
 		panic(err)
@@ -17,7 +19,28 @@ func (tx *Tx) Serialize() []byte {
 	return res
 }
 
-func (tx *Tx) UnSerialize(jsonTx []byte) error {
+func (tx *Txs) UnSerialize(jsonTx []byte) error {
 	err := json.Unmarshal(jsonTx, tx)
 	return err
+}
+
+func UnSerializeTxs(jsonTxs []byte) (txs Txs, err error) {
+	err = json.Unmarshal(jsonTxs, &txs)
+	return txs, err
+}
+
+func (tx *Tx) Validate() bool {
+	if tx.Fee.Validate() == false {
+		return false
+	}
+	if tx.Amount.Validate() == false {
+		return false
+	}
+	if tx.From.Validate() == false {
+		return false
+	}
+	if tx.To.Validate() == false {
+		return false
+	}
+	return true
 }

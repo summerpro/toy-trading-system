@@ -7,6 +7,13 @@ type MemDb struct {
 	mutex sync.Mutex
 }
 
+func NewMemDb() *MemDb {
+	return &MemDb{
+		memDb: make(map[string][]byte),
+		mutex: sync.Mutex{},
+	}
+}
+
 func (m *MemDb) Set(key, value []byte) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
