@@ -51,3 +51,10 @@ func (txPool *HeapTxPool) Lock() {
 func (txPool *HeapTxPool) UnLock() {
 	txPool.poolLock.Unlock()
 }
+
+func (txPool *HeapTxPool) Size() int {
+	txPool.Lock()
+	defer txPool.UnLock()
+
+	return txPool.txsHeap.Size()
+}

@@ -22,7 +22,11 @@ func (m *MemDb) Set(key, value []byte) {
 }
 
 func (m *MemDb) Get(key []byte) []byte {
-	return m.memDb[string(key)]
+	value, ok := m.memDb[string(key)]
+	if ok {
+		return value
+	}
+	return nil
 }
 
 func (m *MemDb) Commit() {

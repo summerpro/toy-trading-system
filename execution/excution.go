@@ -1,18 +1,18 @@
-package excution
+package execution
 
 import (
 	"github.com/summerpro/toy-trading-system/database"
 	"github.com/summerpro/toy-trading-system/types"
 )
 
-type Excution struct {
+type Execution struct {
 }
 
-func NewExcution() *Excution {
-	return &Excution{}
+func NewExcution() *Execution {
+	return &Execution{}
 }
 
-func (e *Excution) ExcuteTx(txs types.Txs, db database.DB) types.Receipt {
+func (e *Execution) ExcuteTx(txs types.Txs, db *database.CacheDb) types.Receipt {
 	receipt := types.NewReceipt(len(txs))
 	for _, tx := range txs {
 		var fromAccount, toAccount types.Account
@@ -35,28 +35,21 @@ func (e *Excution) ExcuteTx(txs types.Txs, db database.DB) types.Receipt {
 			toAccount.Amount = toAccount.Amount.Add(tx.Amount)
 			systemAccount.Amount = systemAccount.Amount.Add(tx.Fee)
 			receipt.TotalFee = receipt.TotalFee.Add(tx.Fee)
-			db.Set(tx.From.Bytes(), fromAccount.Serialize())
-			db.Set(tx.To.Bytes(), toAccount.Serialize())
+			db.Set(tx.From, fromAccount)
+			db.Set(tx.To, toAccount)
 		}
 		receiptItem.FromBalance = fromAccount.Amount
 		receiptItem.ToBalance = toAccount.Amount
 		receiptItem.SystemBalance = systemAccount.Amount
 
-		db.Set(types.SystemAddress.Bytes(), systemAccount.Serialize())
+		db.Set(types.SystemAddress, systemAccount)
 		receipt.Item = append(receipt.Item, receiptItem)
 	}
 	return receipt
 }
 
-func getAccount(addr types.Address, db database.DB) types.Account {
-	byteToAmount := db.Get(addr.Bytes())
-	if byteToAmount == nil {
-		return types.Account{
-			Addr:   addr,
-			Amount: types.ZeroAmount,
-		}
-	}
-	account := types.UnSerializeAccount(byteToAmount)
+func getAccount(addr types.Address, db *database.CacheDb) types.Account {
+	account := db.Get(addr)
 	return account
 }
 
