@@ -7,9 +7,9 @@ type MemDb struct {
 	mutex sync.Mutex
 }
 
-func NewMemDb() *MemDb {
+func NewMemDb(initSize int) *MemDb {
 	return &MemDb{
-		memDb: make(map[string][]byte),
+		memDb: make(map[string][]byte, initSize),
 		mutex: sync.Mutex{},
 	}
 }

@@ -7,7 +7,7 @@ import (
 
 type HeapTxPool struct {
 	size     int
-	hp       interface{}
+	txsHeap  TxsHeap
 	poolLock sync.Mutex
 }
 

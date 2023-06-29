@@ -42,6 +42,7 @@ func (e *Excution) ExcuteTx(txs types.Txs, db database.DB) types.Receipt {
 		receiptItem.ToBalance = toAccount.Amount
 		receiptItem.SystemBalance = systemAccount.Amount
 
+		db.Set(types.SystemAddress.Bytes(), systemAccount.Serialize())
 		receipt.Item = append(receipt.Item, receiptItem)
 	}
 	return receipt
