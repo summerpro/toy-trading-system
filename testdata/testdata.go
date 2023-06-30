@@ -1,11 +1,11 @@
-package test
+package testdata
 
 import (
 	"github.com/summerpro/toy-trading-system/types"
 )
 
 const (
-	InitUserAmount types.Amount = 1000
+	InitUserAmount types.Amount = 100000000
 )
 
 func GetTestAccount() []types.Account {

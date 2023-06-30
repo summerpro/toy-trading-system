@@ -30,8 +30,8 @@ func NewSchdeduler(context *config.Context) *Scheduler {
 	}
 }
 
-func (scheduler *Scheduler) Schedule() {
-	go scheduler.SolveTxs()
+func (scheduler *Scheduler) schedule() {
+	go scheduler.solveTxs()
 
 	tick := time.Tick(time.Millisecond * time.Duration(scheduler.context.ExecTxSleepTime))
 	for {
@@ -47,6 +47,7 @@ func (scheduler *Scheduler) Schedule() {
 					receipt := scheduler.exec.ExcuteTx(txs.TxSlice, cacheDb)
 					receiptList = append(receiptList, receipt)
 				}
+				log.Println("time to solve txs,", len(txsData), "txs have been solved")
 				cacheDb.Commit()
 				cacheDb.RangeCache()
 			}
@@ -60,11 +61,14 @@ func (scheduler *Scheduler) ReceiveTxs(txs types.Txs) {
 	scheduler.txsChan <- txs
 }
 
-func (scheduler *Scheduler) SolveTxs() {
+func (scheduler *Scheduler) solveTxs() {
 	for txs := range scheduler.txsChan {
-		for scheduler.txPool.Size() == scheduler.context.MaxTxsPoolSize {
+		poolSize := scheduler.txPool.Size()
+		for poolSize == scheduler.context.MaxTxsPoolSize {
+			log.Println("txs pool is full, size: ", poolSize)
 			time.Sleep(time.Millisecond * time.Duration(scheduler.context.ExecTxSleepTime))
 		}
+		log.Println("txs pool size: ", poolSize)
 		cacheDb := database.NewCacheDb(scheduler.context.InitCacheDbSize, scheduler.db)
 		receipt := scheduler.exec.ExcuteTx(txs, cacheDb)
 
@@ -84,4 +88,16 @@ func (scheduler *Scheduler) SolveTxs() {
 
 func (scheduler *Scheduler) StopScheduler() {
 	scheduler.stopChan <- struct{}{}
+	close(scheduler.txsChan)
+	close(scheduler.stopChan)
+}
+
+func (scheduler *Scheduler) StartScheduler() {
+	go scheduler.schedule()
+}
+
+func (scheduler *Scheduler) InitAccount(initAccount []types.Account) {
+	for _, acc := range initAccount {
+		scheduler.db.Set(acc.Addr.Bytes(), acc.Serialize())
+	}
 }

@@ -1,8 +1,8 @@
 package database
 
 import (
-	"fmt"
 	"github.com/summerpro/toy-trading-system/types"
+	"log"
 	"sync"
 )
 
@@ -59,11 +59,13 @@ func (c *CacheDb) RangeCache() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	fmt.Println("Account List:")
-	fmt.Println("------------------")
+	log.Println()
+	log.Println("------------------")
+	log.Println("Account List:")
+	log.Println("------------------")
 	for k, v := range c.cacheDb {
-		fmt.Println(k, v.Amount)
+		log.Println(k, v.Amount)
 	}
-	fmt.Println("------------------")
-	fmt.Println()
+	log.Println("------------------")
+	log.Println()
 }
