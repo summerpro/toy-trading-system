@@ -6,14 +6,21 @@ import (
 )
 
 type Execution struct {
+	maxTxSize int
 }
 
-func NewExcution() *Execution {
-	return &Execution{}
+func NewExcution(maxTxSize int) *Execution {
+	return &Execution{
+		maxTxSize: maxTxSize,
+	}
 }
 
 func (e *Execution) ExcuteTx(txs types.Txs, db *database.CacheDb) types.Receipt {
 	receipt := types.NewReceipt(len(txs))
+	txSize := len(txs)
+	if txSize == 0 || txSize > e.maxTxSize {
+		return receipt
+	}
 	for _, tx := range txs {
 		var fromAccount, toAccount types.Account
 		txInvalidFlag := false

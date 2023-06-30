@@ -8,6 +8,7 @@ type Context struct {
 	BlockSize       int
 	MaxTxsPoolSize  int
 	TxsChannelSize  int
+	MaxTxsSize      int
 }
 
 func NewContext(initCacheDbSize int,
@@ -16,7 +17,8 @@ func NewContext(initCacheDbSize int,
 	initTxsPoolSize int,
 	blockSize int,
 	maxTxsPoolSize int,
-	txsChannelSize int) *Context {
+	txsChannelSize int,
+	maxTxSize int) *Context {
 	return &Context{
 		InitCacheDbSize: initCacheDbSize,
 		InitMemDbSize:   initMemDbSize,
@@ -25,6 +27,7 @@ func NewContext(initCacheDbSize int,
 		BlockSize:       blockSize,
 		MaxTxsPoolSize:  maxTxsPoolSize,
 		TxsChannelSize:  txsChannelSize,
+		MaxTxsSize:      maxTxSize,
 	}
 }
 
@@ -37,5 +40,6 @@ func DefaultContext() *Context {
 		BlockSize:       DefaultBlockSize,
 		MaxTxsPoolSize:  DefaultMaxTxsPoolSize,
 		TxsChannelSize:  DefaultTxsChannelSize,
+		MaxTxsSize:      DefaultMaxTxSize,
 	}
 }

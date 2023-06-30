@@ -23,7 +23,7 @@ func NewSchdeduler(context *config.Context) *Scheduler {
 	return &Scheduler{
 		txPool:   txpool.NewHeapTxPool(context.InitTxsPoolSize, context.MaxTxsPoolSize),
 		db:       database.NewMemDb(context.InitMemDbSize),
-		exec:     execution.NewExcution(),
+		exec:     execution.NewExcution(context.MaxTxsSize),
 		txsChan:  make(chan types.Txs, context.TxsChannelSize),
 		stopChan: make(chan struct{}),
 		context:  context,

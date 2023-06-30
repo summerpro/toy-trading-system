@@ -41,6 +41,7 @@ func buildTestDataList(testAcc []types.Account) []testdata.TestTxsData {
 		{Txs: []types.Tx{{From: testAcc[0].Addr, To: testAcc[1].Addr, Amount: types.ToAmount(1), Fee: types.ToAmount(10)}, {From: testAcc[2].Addr, To: testAcc[3].Addr, Amount: types.ToAmount(1), Fee: types.ToAmount(10)}}},
 		{Txs: []types.Tx{{From: testAcc[0].Addr, To: testAcc[1].Addr, Amount: types.ToAmount(1), Fee: types.ToAmount(10)}, {From: testAcc[2].Addr, To: testAcc[3].Addr, Amount: types.ToAmount(1), Fee: types.ToAmount(10)}}},
 		{Txs: []types.Tx{{From: testAcc[0].Addr, To: testAcc[1].Addr, Amount: types.ToAmount(-1), Fee: types.ToAmount(10)}, {From: testAcc[2].Addr, To: testAcc[3].Addr, Amount: types.ToAmount(-1), Fee: types.ToAmount(10)}}},
+		{},
 	}
 	return testDataList
 }

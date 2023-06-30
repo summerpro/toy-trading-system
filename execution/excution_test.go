@@ -11,7 +11,7 @@ import (
 func TestExcution_ExcuteTx(t *testing.T) {
 	testAcc := testdata.GetTestAccount()
 	testDataList := testdata.GetTestTxsList(testAcc)
-	exec := NewExcution()
+	exec := NewExcution(10)
 
 	for i, testdata := range testDataList {
 		memDb := database.NewMemDb(100000)

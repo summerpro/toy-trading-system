@@ -8,4 +8,5 @@ const (
 	DefaultBlockSize       = 10000
 	DefaultMaxTxsPoolSize  = 100000000
 	DefaultTxsChannelSize  = 100000
+	DefaultMaxTxSize       = 100
 )
